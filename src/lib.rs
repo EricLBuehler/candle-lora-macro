@@ -79,6 +79,8 @@ pub fn select(tokens: TokenStream1) -> TokenStream1 {
         }
     }
 
+    //let st_name = Ident::new("Model", Span::mixed_site());
+
     let mut linear_stream = TokenStream::new();
     if !linear_fields.is_empty() {
         quote_into::quote_into!(linear_stream += [#{
@@ -115,13 +117,15 @@ pub fn select(tokens: TokenStream1) -> TokenStream1 {
         }];);
     }
 
-    let result = quote::quote! {
+    let mut stream = TokenStream::new();
+    quote_into::quote_into! { stream +=
         impl #st_name {
-            fn get_lora_model<'a>(&'a mut self, lora_config: candle_lora::LoraConfig, linear_config: Option<candle_lora::LoraLinearConfig>, conv1d_config: Option<candle_lora::LoraConv1dConfig>, conv2d_config: Option<candle_lora::LoraConv2dConfig>, embed_config: Option<candle_lora::LoraEmbeddingConfig>) -> candle_lora::SelectedLayers<'a, String> {
+            fn get_lora_model<'a>(&'a mut self, lora_config: candle_lora::LoraConfig, linear_config: Option<candle_lora::LoraLinearConfig>, conv1d_config: Option<candle_lora::LoraConv1dConfig>, conv2d_config: Option<candle_lora::LoraConv2dConfig>, embed_config: Option<candle_lora::LoraEmbeddingConfig>) {
                 let mut linear: ::std::collections::HashMap<String, &dyn candle_lora::LinearLayerLike> = ::std::collections::HashMap::new();
                 let mut conv1d: ::std::collections::HashMap<String, &dyn candle_lora::Conv1dLayerLike> = ::std::collections::HashMap::new();
                 let mut conv2d: ::std::collections::HashMap<String, &dyn candle_lora::Conv2dLayerLike> = ::std::collections::HashMap::new();
                 let mut embed: ::std::collections::HashMap<String, &dyn candle_lora::EmbeddingLayerLike> = ::std::collections::HashMap::new();
+
                 #linear_stream
                 #conv1d_stream
                 #conv2d_stream
@@ -140,10 +144,10 @@ pub fn select(tokens: TokenStream1) -> TokenStream1 {
                 if embed_config.is_some() {
                     builder = builder.add_embed_layers(embed, embed_config.unwrap());
                 }
-                builder.build()
+                let selection = builder.build();
             }
         }
-    };
+    }
 
-    result.into()
+    stream.into()
 }

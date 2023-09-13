@@ -1,13 +1,7 @@
-use std::fmt::Debug;
-
-use candle_core::{Device, DType};
-use candle_lora::{LinearLayerLike, LoraLinearConfig};
+use candle_core::{DType, Device};
+use candle_lora::{LinearLayerLike, LoraConfig, LoraLinearConfig};
 use candle_lora_macro::SelectLoraLayers;
-use candle_nn::{VarMap, init, Linear};
-
-trait MyTrait: Debug { }
-
-impl MyTrait for i32 { }
+use candle_nn::{init, Linear, VarMap};
 
 #[allow(dead_code)]
 #[derive(SelectLoraLayers)]
@@ -21,20 +15,29 @@ fn main() {
     let dtype = DType::F32;
 
     let map = VarMap::new();
-    let layer_weight = map.get(
-        (10, 10),
-        "layer.weight",
-        init::DEFAULT_KAIMING_NORMAL,
-        dtype,
-        &device,
-    ).unwrap();
+    let layer_weight = map
+        .get(
+            (10, 10),
+            "layer.weight",
+            init::DEFAULT_KAIMING_NORMAL,
+            dtype,
+            &device,
+        )
+        .unwrap();
 
     let mut m = Model {
         a: Box::new(Linear::new(layer_weight.clone(), None)),
         b: 1,
     };
 
-    m.select_layers(Some(LoraLinearConfig::new(10, 10)), None, None, None);
+    let loraconfig = LoraConfig::new(1, 1., None, &device, dtype);
+    m.get_lora_model(
+        loraconfig,
+        Some(LoraLinearConfig::new(10, 10)),
+        None,
+        None,
+        None,
+    );
 
     println!("{:?}", m.a);
 }

@@ -1,6 +1,6 @@
 use candle_core::{DType, Device};
-use candle_lora::{LoraConfig, LoraLinearConfig, LinearLayerLike};
-use candle_lora_macro::{AutoLora, replace_layer_fields};
+use candle_lora::{LinearLayerLike, LoraConfig, LoraLinearConfig};
+use candle_lora_macro::{replace_layer_fields, AutoLora};
 use candle_nn::{init, Linear, VarMap};
 
 #[allow(dead_code)]

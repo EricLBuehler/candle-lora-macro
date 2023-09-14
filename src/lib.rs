@@ -86,8 +86,8 @@ fn is_ident(ident: &Ident, name: &str) -> bool {
     *ident == name
 }
 
-#[proc_macro_derive(AutoLora)]
-pub fn select(tokens: TokenStream1) -> TokenStream1 {
+#[proc_macro_derive(AutoLoraConvert)]
+pub fn auto_lora_convert(tokens: TokenStream1) -> TokenStream1 {
     let ast = parse_macro_input!(tokens as DeriveInput);
     let mut linear_fields = Vec::new();
     let mut conv1d_fields = Vec::new();

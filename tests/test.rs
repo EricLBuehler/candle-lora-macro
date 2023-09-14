@@ -1,16 +1,17 @@
 use candle_core::{DType, Device};
 use candle_lora::{LinearLayerLike, LoraConfig, LoraLinearConfig};
-use candle_lora_macro::SelectLoraLayers;
+use candle_lora_macro::AutoLora;
 use candle_nn::{init, Linear, VarMap};
 
 #[allow(dead_code)]
-#[derive(SelectLoraLayers)]
+#[derive(AutoLora)]
 struct Model {
     a: Box<dyn LinearLayerLike>,
     b: i32,
 }
 
-fn main() {
+#[test]
+fn test() {
     let device = Device::Cpu;
     let dtype = DType::F32;
 

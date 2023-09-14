@@ -6,7 +6,7 @@ fn is_ident(ident: &Ident, name: &str) -> bool {
     *ident == name
 }
 
-#[proc_macro_derive(SelectLoraLayers)]
+#[proc_macro_derive(AutoLora)]
 pub fn select(tokens: TokenStream1) -> TokenStream1 {
     let ast = parse_macro_input!(tokens as DeriveInput);
     let mut linear_fields = Vec::new();
@@ -47,9 +47,7 @@ pub fn select(tokens: TokenStream1) -> TokenStream1 {
                                             let trt = &bound.path.segments.first().unwrap().ident;
                                             let value = (
                                                 field.ident.clone().unwrap(),
-                                                trt.clone(),
-                                                st_name.to_string()
-                                                    + &field.ident.as_ref().unwrap().to_string(),
+                                                field.ident.as_ref().unwrap().to_string(),
                                             );
                                             if is_ident(trt, "LinearLayerLike") {
                                                 linear_fields.push(value);
@@ -84,7 +82,7 @@ pub fn select(tokens: TokenStream1) -> TokenStream1 {
     let mut linear_stream = TokenStream::new();
     if !linear_fields.is_empty() {
         quote_into::quote_into!(linear_stream += [#{
-            for (_,_,name) in linear_fields {
+            for (_,name) in linear_fields.iter() {
                 quote_into::quote_into!(linear_stream += (linear.insert(#name.to_string(), &*self.a)),)
             }
         }];);
@@ -93,7 +91,7 @@ pub fn select(tokens: TokenStream1) -> TokenStream1 {
     let mut conv1d_stream = TokenStream::new();
     if !conv1d_fields.is_empty() {
         quote_into::quote_into!(conv1d_stream += [#{
-            for (_,_,name) in conv1d_fields {
+            for (_,name) in conv1d_fields.iter() {
                 quote_into::quote_into!(conv1d_stream += (linear.insert(#name.to_string(), &*self.a)),)
             }
         }];);
@@ -102,7 +100,7 @@ pub fn select(tokens: TokenStream1) -> TokenStream1 {
     let mut conv2d_stream = TokenStream::new();
     if !conv2d_fields.is_empty() {
         quote_into::quote_into!(conv2d_stream += [#{
-            for (_,_,name) in conv2d_fields {
+            for (_,name) in conv2d_fields.iter() {
                 quote_into::quote_into!(conv2d_stream += (linear.insert(#name.to_string(), &*self.a)),)
             }
         }];);
@@ -111,8 +109,44 @@ pub fn select(tokens: TokenStream1) -> TokenStream1 {
     let mut embed_stream = TokenStream::new();
     if !embed_fields.is_empty() {
         quote_into::quote_into!(embed_stream += [#{
-            for (_,_,name) in embed_fields {
+            for (_,name) in embed_fields.iter() {
                 quote_into::quote_into!(embed_stream += (linear.insert(#name.to_string(), &*self.a)),)
+            }
+        }];);
+    }
+
+    let mut linear_stream_assign = TokenStream::new();
+    if !linear_fields.is_empty() {
+        quote_into::quote_into!(linear_stream_assign += [#{
+            for (name, n) in linear_fields {
+                linear_stream_assign.extend(quote::quote!((self.#name = Box::new(new_layers.linear.get(#n).unwrap().clone())),))
+            }
+        }];);
+    }
+
+    let mut conv1d_stream_assign = TokenStream::new();
+    if !conv1d_fields.is_empty() {
+        quote_into::quote_into!(conv1d_stream_assign += [#{
+            for (name, n) in conv1d_fields {
+                conv1d_stream_assign.extend(quote::quote!((self.#name = Box::new(new_layers.linear.get(#n).unwrap().clone())),))
+            }
+        }];);
+    }
+
+    let mut conv2d_stream_assign = TokenStream::new();
+    if !conv2d_fields.is_empty() {
+        quote_into::quote_into!(conv2d_stream_assign += [#{
+            for (name, n) in conv2d_fields {
+                conv2d_stream_assign.extend(quote::quote!((self.#name = Box::new(new_layers.linear.get(#n).unwrap().clone())),))
+            }
+        }];);
+    }
+
+    let mut embed_stream_assign = TokenStream::new();
+    if !embed_fields.is_empty() {
+        quote_into::quote_into!(embed_stream_assign += [#{
+            for (name, n) in embed_fields {
+                embed_stream_assign.extend(quote::quote!((self.#name = Box::new(new_layers.linear.get(#n).unwrap().clone())),))
             }
         }];);
     }
@@ -145,6 +179,13 @@ pub fn select(tokens: TokenStream1) -> TokenStream1 {
                     builder = builder.add_embed_layers(embed, embed_config.unwrap());
                 }
                 let selection = builder.build();
+
+                let new_layers = candle_lora::Lora::convert_model(selection, lora_config);
+
+                #linear_stream_assign
+                #conv1d_stream_assign
+                #conv2d_stream_assign
+                #embed_stream_assign
             }
         }
     }

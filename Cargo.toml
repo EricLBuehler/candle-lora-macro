@@ -1,6 +1,6 @@
 [package]
 name = "candle-lora-macro"
-version = "0.1.0"
+version = "0.9.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html[lib]
@@ -12,6 +12,7 @@ syn = { version = "2.0.32", features = ["full", "extra-traits"] }
 candle-lora = { git = "https://github.com/EricLBuehler/candle-lora.git", version = "0.1.0" }
 candle-core = { git = "https://github.com/huggingface/candle.git", version = "0.2.0" }
 candle-nn = { git = "https://github.com/huggingface/candle.git", version = "0.2.0" }
+quote = "1.0.33"
 
 [lib]
 proc-macro = true

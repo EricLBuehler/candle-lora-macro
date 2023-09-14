@@ -119,7 +119,7 @@ pub fn select(tokens: TokenStream1) -> TokenStream1 {
     if !linear_fields.is_empty() {
         quote_into::quote_into!(linear_stream_assign += [#{
             for (name, n) in linear_fields {
-                linear_stream_assign.extend(quote::quote!((self.#name = Box::new(new_layers.linear.get(#n).unwrap().clone())),))
+                linear_stream_assign.extend(quote::quote!((self.#name = ::std::boxed::Box::new(new_layers.linear.get(#n).unwrap().clone())),))
             }
         }];);
     }
@@ -128,7 +128,7 @@ pub fn select(tokens: TokenStream1) -> TokenStream1 {
     if !conv1d_fields.is_empty() {
         quote_into::quote_into!(conv1d_stream_assign += [#{
             for (name, n) in conv1d_fields {
-                conv1d_stream_assign.extend(quote::quote!((self.#name = Box::new(new_layers.linear.get(#n).unwrap().clone())),))
+                conv1d_stream_assign.extend(quote::quote!((self.#name = ::std::boxed::Box::new(new_layers.linear.get(#n).unwrap().clone())),))
             }
         }];);
     }
@@ -137,7 +137,7 @@ pub fn select(tokens: TokenStream1) -> TokenStream1 {
     if !conv2d_fields.is_empty() {
         quote_into::quote_into!(conv2d_stream_assign += [#{
             for (name, n) in conv2d_fields {
-                conv2d_stream_assign.extend(quote::quote!((self.#name = Box::new(new_layers.linear.get(#n).unwrap().clone())),))
+                conv2d_stream_assign.extend(quote::quote!((self.#name = ::std::boxed::Box::new(new_layers.linear.get(#n).unwrap().clone())),))
             }
         }];);
     }
@@ -146,7 +146,7 @@ pub fn select(tokens: TokenStream1) -> TokenStream1 {
     if !embed_fields.is_empty() {
         quote_into::quote_into!(embed_stream_assign += [#{
             for (name, n) in embed_fields {
-                embed_stream_assign.extend(quote::quote!((self.#name = Box::new(new_layers.linear.get(#n).unwrap().clone())),))
+                embed_stream_assign.extend(quote::quote!((self.#name = ::std::boxed::Box::new(new_layers.linear.get(#n).unwrap().clone())),))
             }
         }];);
     }

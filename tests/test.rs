@@ -1,12 +1,13 @@
 use candle_core::{DType, Device};
-use candle_lora::{LinearLayerLike, LoraConfig, LoraLinearConfig};
-use candle_lora_macro::AutoLora;
+use candle_lora::{LoraConfig, LoraLinearConfig, LinearLayerLike};
+use candle_lora_macro::{AutoLora, replace_layer_fields};
 use candle_nn::{init, Linear, VarMap};
 
 #[allow(dead_code)]
+#[replace_layer_fields]
 #[derive(AutoLora)]
 struct Model {
-    a: Box<dyn LinearLayerLike>,
+    a: Linear,
     b: i32,
 }
 

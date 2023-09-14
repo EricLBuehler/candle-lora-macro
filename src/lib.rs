@@ -1,6 +1,81 @@
 use proc_macro::TokenStream as TokenStream1;
 use proc_macro2::TokenStream;
-use syn::{parse_macro_input, Data, DeriveInput, GenericArgument, Ident, Type, TypeParamBound};
+use syn::{parse_macro_input, Data, DeriveInput, GenericArgument, Ident, Type, TypeParamBound, Fields, parse::Parser, Visibility};
+
+#[proc_macro_attribute]
+pub fn replace_layer_fields(_args: TokenStream1, input: TokenStream1) -> TokenStream1 {
+    let mut ast = parse_macro_input!(input as DeriveInput);
+    match &mut ast.data {
+        Data::Struct(ref mut struct_data) => {
+            match &mut struct_data.fields {
+                Fields::Named(fields) => {
+                    for field in fields.named.iter_mut() {
+                        let mut f = None;
+                        let ident = field.ident.clone().unwrap();
+                        let ty = field.ty.clone();
+                        match ty {
+                            Type::Path(path) => {
+                                if path.path.segments.len() == 1 {
+                                    match path.path.segments.first().unwrap().ident.to_string().as_str() {
+                                        "Linear" => {
+                                            if let Visibility::Public(_) = field.vis {
+                                                f = Some(syn::Field::parse_named.parse2(quote::quote!(pub #ident: Box<dyn LinearLayerLike>)).unwrap());
+                                            }
+                                            else {
+                                                f = Some(syn::Field::parse_named.parse2(quote::quote!(#ident: Box<dyn LinearLayerLike>)).unwrap());
+                                            }
+                                        }
+                                        "Conv1d" => {
+                                            if let Visibility::Public(_) = field.vis {
+                                                f = Some(syn::Field::parse_named.parse2(quote::quote!(pub #ident: Box<dyn Conv1dLayerLike>)).unwrap());
+                                            }
+                                            else {
+                                                f = Some(syn::Field::parse_named.parse2(quote::quote!(#ident: Box<dyn Conv1dLayerLike>)).unwrap());
+                                            }
+                                        }
+                                        "Conv2d" => {
+                                            if let Visibility::Public(_) = field.vis {
+                                                f = Some(syn::Field::parse_named.parse2(quote::quote!(pub #ident: Box<dyn Conv2dLayerLike>)).unwrap());
+                                            }
+                                            else {
+                                                f = Some(syn::Field::parse_named.parse2(quote::quote!(#ident: Box<dyn Conv2dLayerLike>)).unwrap());
+                                            }
+                                        }
+                                        "Embedding" => {
+                                            if let Visibility::Public(_) = field.vis {
+                                                f = Some(syn::Field::parse_named.parse2(quote::quote!(pub #ident: Box<dyn EmbeddingLayerLike>)).unwrap());
+                                            }
+                                            else {
+                                                f = Some(syn::Field::parse_named.parse2(quote::quote!(#ident: Box<dyn EmbeddingLayerLike>)).unwrap());
+                                            }
+                                        }
+                                        _ => {}
+                                    }
+                                }
+                                else {
+                                    panic!("Expected single type")
+                                }
+                            }
+                            _ => {
+                                panic!("Expected syn::Type::Path");
+                            }
+                        }
+                        if let Some(f) = f{
+                            *field = f;
+                        }
+                    }
+                }
+                _ => {
+                    panic!("Named fields are required.")
+                }
+            }
+        }
+        _ => {
+            panic!("Cannot swap fields of non struct!");
+        }
+    }
+    return quote::quote!(#ast).into();
+}
 
 fn is_ident(ident: &Ident, name: &str) -> bool {
     *ident == name

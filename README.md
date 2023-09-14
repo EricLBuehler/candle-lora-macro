@@ -2,10 +2,5 @@
 [![MIT License](https://img.shields.io/badge/License-MIT-informational)](LICENSE)
 [![Continuous integration](https://github.com/EricLBuehler/candle-lora-macro/actions/workflows/ci.yml/badge.svg)](https://github.com/EricLBuehler/candle-lora-macro/actions/workflows/ci.yml)
 
-Macros for candle-lora. These are designed to allow ergonomics similar to what the `peft` library allows.
-
-These macros will provide utilities to:
-1) Swap the layers.
-
-Currently, candle-lora-macro is able to:
-1) Select layers for swapping.
+This library are designed to allow ergonomics similar to what the `peft` library allows. It does this by providing a single derive macro, called `AutoLora`. This macro defines a method
+`get_lora_model` which selects and swaps all `Box<dyn ...LayerLike>` layers. Currently, it does not update struct types.

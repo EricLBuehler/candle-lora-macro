@@ -1,17 +1,23 @@
-use candle_core::{DType, Device};
+use candle_core::{DType, Device, Module, Result, Tensor};
 use candle_lora::{LinearLayerLike, LoraConfig, LoraLinearConfig};
 use candle_lora_macro::{replace_layer_fields, AutoLoraConvert};
 use candle_nn::{init, Linear, VarMap};
 
 #[replace_layer_fields]
-#[derive(AutoLoraConvert)]
+#[derive(AutoLoraConvert, Debug)]
 struct Model {
     a: Linear,
     b: i32,
 }
 
+impl Module for Model {
+    fn forward(&self, input: &Tensor) -> Result<Tensor> {
+        self.a.forward(input)
+    }
+}
+
 #[test]
-fn test() {
+fn linear() {
     let device = Device::Cpu;
     let dtype = DType::F32;
 
@@ -26,13 +32,13 @@ fn test() {
         )
         .unwrap();
 
-    let mut m = Model {
+    let mut model = Model {
         a: Box::new(Linear::new(layer_weight.clone(), None)),
         b: 1,
     };
 
     let loraconfig = LoraConfig::new(1, 1., None, &device, dtype);
-    m.get_lora_model(
+    model.get_lora_model(
         loraconfig,
         Some(LoraLinearConfig::new(10, 10)),
         None,
@@ -40,6 +46,12 @@ fn test() {
         None,
     );
 
-    println!("{:?}", m.a);
-    println!("{:?}", m.b);
+    let dummy_image = Tensor::zeros((10, 10), DType::F32, &device).unwrap();
+
+    //Test the model
+    let digit = model.forward(&dummy_image).unwrap();
+    println!("Output: {digit:?}");
+
+    println!("{:?}", model.a);
+    println!("{:?}", model.b);
 }

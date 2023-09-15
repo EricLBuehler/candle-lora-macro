@@ -312,7 +312,7 @@ pub fn auto_lora_convert(tokens: TokenStream1) -> TokenStream1 {
     if !conv1d_fields.is_empty() {
         quote_into::quote_into!(conv1d_stream += [#{
             for (namei,name) in conv1d_fields.iter() {
-                quote_into::quote_into!(conv1d_stream += (linear.insert(#name.to_string(), &*self.#namei)),)
+                quote_into::quote_into!(conv1d_stream += (conv1d.insert(#name.to_string(), &*self.#namei)),)
             }
         }];);
     }
@@ -321,7 +321,7 @@ pub fn auto_lora_convert(tokens: TokenStream1) -> TokenStream1 {
     if !conv2d_fields.is_empty() {
         quote_into::quote_into!(conv2d_stream += [#{
             for (namei,name) in conv2d_fields.iter() {
-                quote_into::quote_into!(conv2d_stream += (linear.insert(#name.to_string(), &*self.#namei)),)
+                quote_into::quote_into!(conv2d_stream += (conv2d.insert(#name.to_string(), &*self.#namei)),)
             }
         }];);
     }
@@ -330,7 +330,7 @@ pub fn auto_lora_convert(tokens: TokenStream1) -> TokenStream1 {
     if !embed_fields.is_empty() {
         quote_into::quote_into!(embed_stream += [#{
             for (namei,name) in embed_fields.iter() {
-                quote_into::quote_into!(embed_stream += (linear.insert(#name.to_string(), &*self.#namei)),)
+                quote_into::quote_into!(embed_stream += (embed.insert(#name.to_string(), &*self.#namei)),)
             }
         }];);
     }
@@ -384,7 +384,7 @@ pub fn auto_lora_convert(tokens: TokenStream1) -> TokenStream1 {
     if !conv1d_option1_fields.is_empty() {
         quote_into::quote_into!(conv1d_option1_stream += [#{
             for (namei,name) in conv1d_option1_fields.iter() {
-                quote_into::quote_into!(conv1d_option1_stream += (linear.insert(#name.to_string(), &*self.#namei)),)
+                quote_into::quote_into!(conv1d_option1_stream += (conv1d.insert(#name.to_string(), self.#namei.as_deref().unwrap())),)
             }
         }];);
     }
@@ -393,7 +393,7 @@ pub fn auto_lora_convert(tokens: TokenStream1) -> TokenStream1 {
     if !conv2d_option1_fields.is_empty() {
         quote_into::quote_into!(conv2d_option1_stream += [#{
             for (namei,name) in conv2d_option1_fields.iter() {
-                quote_into::quote_into!(conv2d_option1_stream += (linear.insert(#name.to_string(), &*self.#namei)),)
+                quote_into::quote_into!(conv2d_option1_stream += (conv2d.insert(#name.to_string(), self.#namei.as_deref().unwrap())),)
             }
         }];);
     }
@@ -402,7 +402,7 @@ pub fn auto_lora_convert(tokens: TokenStream1) -> TokenStream1 {
     if !embed_option1_fields.is_empty() {
         quote_into::quote_into!(embed_option1_stream += [#{
             for (namei,name) in embed_option1_fields.iter() {
-                quote_into::quote_into!(embed_option1_stream += (linear.insert(#name.to_string(), &*self.#namei)),)
+                quote_into::quote_into!(embed_option1_stream += (embed.insert(#name.to_string(), self.#namei.as_deref().unwrap())),)
             }
         }];);
     }

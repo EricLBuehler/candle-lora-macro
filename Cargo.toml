@@ -8,7 +8,7 @@ authors = ["Eric Buehler"]
 description = "Macros for a more ergonomic candle-lora."
 homepage = "https://github.com/EricLBuehler/trc"
 repository = "https://github.com/EricLBuehler/trc"
-keywords = ["macro", "candle-lora", "ergonomic"]
+keywords = ["machine-learning", "candle-lora", "ergonomic", "macro"] #TODOs: Add candle keyword
 categories = ["science"]
 
 [dependencies]

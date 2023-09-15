@@ -3,7 +3,6 @@ use candle_lora::{LinearLayerLike, LoraConfig, LoraLinearConfig};
 use candle_lora_macro::{replace_layer_fields, AutoLoraConvert};
 use candle_nn::{init, Linear, VarMap};
 
-#[allow(dead_code)]
 #[replace_layer_fields]
 #[derive(AutoLoraConvert)]
 struct Model {
@@ -42,4 +41,5 @@ fn test() {
     );
 
     println!("{:?}", m.a);
+    println!("{:?}", m.b);
 }

@@ -1,7 +1,7 @@
 use candle_core::{DType, Device, Module, Result, Tensor};
 use candle_lora::{EmbeddingLayerLike, LoraConfig, LoraEmbeddingConfig};
 use candle_lora_macro::{replace_layer_fields, AutoLoraConvert};
-use candle_nn::{init, VarMap, Embedding};
+use candle_nn::{init, Embedding, VarMap};
 
 #[replace_layer_fields]
 #[derive(AutoLoraConvert, Debug)]

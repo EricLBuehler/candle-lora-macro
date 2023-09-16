@@ -446,6 +446,7 @@ pub fn auto_lora_convert(tokens: TokenStream1) -> TokenStream1 {
     let mut stream = TokenStream::new();
     quote_into::quote_into! { stream +=
         impl #st_name {
+            /// Be sure to provide a configuration for each type!
             fn get_lora_model<'a>(&'a mut self, lora_config: candle_lora::LoraConfig, linear_config: Option<candle_lora::LoraLinearConfig>, conv1d_config: Option<candle_lora::LoraConv1dConfig>, conv2d_config: Option<candle_lora::LoraConv2dConfig>, embed_config: Option<candle_lora::LoraEmbeddingConfig>) {
                 let mut linear: ::std::collections::HashMap<String, &dyn candle_lora::LinearLayerLike> = ::std::collections::HashMap::new();
                 let mut conv1d: ::std::collections::HashMap<String, &dyn candle_lora::Conv1dLayerLike> = ::std::collections::HashMap::new();
@@ -461,6 +462,19 @@ pub fn auto_lora_convert(tokens: TokenStream1) -> TokenStream1 {
                 #conv1d_option1_stream
                 #conv2d_option1_stream
                 #embed_option1_stream
+
+                if !linear.is_empty() && linear_config.is_none() {
+                    panic!("Config not speified for linear layers.");
+                }
+                if !conv1d.is_empty() && conv1d_config.is_none() {
+                    panic!("Config not speified for conv1d layers.");
+                }
+                if !conv2d.is_empty() && conv2d_config.is_none() {
+                    panic!("Config not speified for conv2d layers.");
+                }
+                if !embed.is_empty() && embed_config.is_none() {
+                    panic!("Config not speified for embedding layers.");
+                }
 
                 let mut builder = candle_lora::SelectedLayersBuilder::new();
                 if linear_config.is_some() {

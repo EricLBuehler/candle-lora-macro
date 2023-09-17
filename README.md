@@ -9,6 +9,8 @@ This library makes using [`candle-lora`](https://github.com/EricLBuehler/candle-
 The `AutoLoraConvert` derive macro automatically creates a method `get_lora_model`, when called which selects and swaps all supported layers for their LoRA counterparts. This method is the equivalent of `peft`'s `get_peft_model` method, and modifies the model in place. It expects all
 layers of the supported types to be a `dyn` type, that is `Box<dyn ...LayerLike>`.
 
+In addition, `AutoLoraConvert` also defines a method `get_merged_lora_model` which does everything `get_lora_model` does, but also merges the weights of the LoRA layers to improve inference performance.
+
 To further automate the process of using `candle-lora`, `candle-lora-macro` also provides an attribute macro called `replace_layer_fields`.
 `replace_layer_fields` swaps out the concrete types for `dyn` types. If this macro is not added to the model structs, be sure to change the member types to `Box<dyn ...LayerLike>`.
 
@@ -21,5 +23,3 @@ To further automate the process of using `candle-lora`, `candle-lora-macro` also
 - `Option<Conv1d>` to `Option<Box<dyn Conv1dLayerLike>>`
 - `Option<Conv2d>` to `Option<Box<dyn Conv2dLayerLike>>`
 - `Option<Embedding>` to `Option<Box<dyn EmbeddigLayerLike>>`
-
-In addition, `candle-lora-macro` also defines a method `get_merged_lora_model` which does everything `get_lora_model` does, but also merges the weights of the LoRA layers to improve inference performance.

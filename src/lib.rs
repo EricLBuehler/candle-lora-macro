@@ -543,7 +543,7 @@ pub fn auto_lora_convert(tokens: TokenStream1) -> TokenStream1 {
     quote_into::quote_into! { stream +=
         impl #st_name {
             /// Be sure to provide a configuration for each type!
-            fn get_lora_model<'a>(&'a mut self, lora_config: candle_lora::LoraConfig, linear_config: Option<candle_lora::LoraLinearConfig>, conv1d_config: Option<candle_lora::LoraConv1dConfig>, conv2d_config: Option<candle_lora::LoraConv2dConfig>, embed_config: Option<candle_lora::LoraEmbeddingConfig>) {
+            fn get_lora_model<'a>(&'a mut self, lora_config: candle_lora::LoraConfig, vb: &candle_nn::VarBuilder, linear_config: Option<candle_lora::LoraLinearConfig>, conv1d_config: Option<candle_lora::LoraConv1dConfig>, conv2d_config: Option<candle_lora::LoraConv2dConfig>, embed_config: Option<candle_lora::LoraEmbeddingConfig>) {
                 let mut linear: ::std::collections::HashMap<String, &dyn candle_lora::LinearLayerLike> = ::std::collections::HashMap::new();
                 let mut conv1d: ::std::collections::HashMap<String, &dyn candle_lora::Conv1dLayerLike> = ::std::collections::HashMap::new();
                 let mut conv2d: ::std::collections::HashMap<String, &dyn candle_lora::Conv2dLayerLike> = ::std::collections::HashMap::new();
@@ -587,7 +587,7 @@ pub fn auto_lora_convert(tokens: TokenStream1) -> TokenStream1 {
                 }
                 let selection = builder.build();
 
-                let new_layers = candle_lora::Lora::convert_model(selection, lora_config);
+                let new_layers = candle_lora::Lora::convert_model(selection, lora_config, &vb);
 
                 #linear_stream_assign
                 #conv1d_stream_assign
@@ -601,7 +601,7 @@ pub fn auto_lora_convert(tokens: TokenStream1) -> TokenStream1 {
             }
 
             /// Be sure to provide a configuration for each type!
-            fn get_merged_lora_model<'a>(&'a mut self, lora_config: candle_lora::LoraConfig, linear_config: Option<candle_lora::LoraLinearConfig>, conv1d_config: Option<candle_lora::LoraConv1dConfig>, conv2d_config: Option<candle_lora::LoraConv2dConfig>, embed_config: Option<candle_lora::LoraEmbeddingConfig>) {
+            fn get_merged_lora_model<'a>(&'a mut self, lora_config: candle_lora::LoraConfig, vb: &candle_nn::VarBuilder, linear_config: Option<candle_lora::LoraLinearConfig>, conv1d_config: Option<candle_lora::LoraConv1dConfig>, conv2d_config: Option<candle_lora::LoraConv2dConfig>, embed_config: Option<candle_lora::LoraEmbeddingConfig>) {
                 use candle_lora::Merge;
                 let mut linear: ::std::collections::HashMap<String, &dyn candle_lora::LinearLayerLike> = ::std::collections::HashMap::new();
                 let mut conv1d: ::std::collections::HashMap<String, &dyn candle_lora::Conv1dLayerLike> = ::std::collections::HashMap::new();
@@ -646,7 +646,7 @@ pub fn auto_lora_convert(tokens: TokenStream1) -> TokenStream1 {
                 }
                 let selection = builder.build();
 
-                let mut new_layers = candle_lora::Lora::convert_model(selection, lora_config);
+                let mut new_layers = candle_lora::Lora::convert_model(selection, lora_config, &vb);
 
                 #linear_merge_stream_assign
                 #conv1d_merge_stream_assign

@@ -1,13 +1,13 @@
 use candle_core::{DType, Device, Module, Result, Tensor};
-use candle_lora::{EmbeddingLayerLike, LoraConfig, LoraEmbeddingConfig};
+use candle_lora::{EmbeddingLayerLike, LinearLayerLike, LoraConfig, LoraEmbeddingConfig, LoraLinearConfig};
 use candle_lora_macro::{replace_layer_fields, AutoLoraConvert};
-use candle_nn::{init, Embedding, VarMap};
+use candle_nn::{init, Embedding, VarMap, Linear};
 
 #[replace_layer_fields]
-#[derive(AutoLoraConvert, Debug)]
+#[derive(AutoLoraConvert)]
 struct Model {
     a: Embedding,
-    b: i32,
+    b: Linear,
 }
 
 impl Module for Model {
@@ -33,13 +33,13 @@ fn main() {
 
     let mut model = Model {
         a: Box::new(Embedding::new(layer_weight.clone(), 10)),
-        b: 1,
+        b: Box::new(Linear::new(layer_weight.clone(), None)),
     };
 
     let loraconfig = LoraConfig::new(1, 1., None, &device, dtype);
     model.get_lora_model(
         loraconfig,
-        None,
+        Some(LoraLinearConfig::new(10, 10)),
         None,
         None,
         Some(LoraEmbeddingConfig::new(10, 10)),

@@ -338,8 +338,20 @@ pub fn auto_lora_convert(tokens: TokenStream1) -> TokenStream1 {
     let mut linear_stream_assign = TokenStream::new();
     if !linear_fields.is_empty() {
         quote_into::quote_into!(linear_stream_assign += [#{
-            for (name, n) in linear_fields {
+            for (name, n) in linear_fields.iter() {
                 linear_stream_assign.extend(quote::quote!((self.#name = ::std::boxed::Box::new(new_layers.linear.get(#n).unwrap().clone())),))
+            }
+        }];);
+    }
+
+    let mut linear_merge_stream_assign = TokenStream::new();
+    if !linear_fields.is_empty() {
+        quote_into::quote_into!(linear_merge_stream_assign += [#{
+            for (name, n) in linear_fields.iter() {
+                linear_merge_stream_assign.extend(quote::quote!(({
+                    (new_layers.linear.get_mut(#n).unwrap().clone()).merge_weights().expect("Merge failed for linear.");
+                    self.#name = ::std::boxed::Box::new(new_layers.linear.get(#n).unwrap().clone())
+                }),))
             }
         }];);
     }
@@ -347,8 +359,20 @@ pub fn auto_lora_convert(tokens: TokenStream1) -> TokenStream1 {
     let mut conv1d_stream_assign = TokenStream::new();
     if !conv1d_fields.is_empty() {
         quote_into::quote_into!(conv1d_stream_assign += [#{
-            for (name, n) in conv1d_fields {
+            for (name, n) in conv1d_fields.iter() {
                 conv1d_stream_assign.extend(quote::quote!((self.#name = ::std::boxed::Box::new(new_layers.conv1d.get(#n).unwrap().clone())),))
+            }
+        }];);
+    }
+
+    let mut conv1d_merge_stream_assign = TokenStream::new();
+    if !conv1d_fields.is_empty() {
+        quote_into::quote_into!(conv1d_merge_stream_assign += [#{
+            for (name, n) in conv1d_fields.iter() {
+                conv1d_merge_stream_assign.extend(quote::quote!(({
+                    (new_layers.conv1d.get_mut(#n).unwrap().clone()).merge_weights().expect("Merge failed for conv1d.");
+                    self.#name = ::std::boxed::Box::new(new_layers.conv1d.get(#n).unwrap().clone())
+                }),))
             }
         }];);
     }
@@ -356,8 +380,20 @@ pub fn auto_lora_convert(tokens: TokenStream1) -> TokenStream1 {
     let mut conv2d_stream_assign = TokenStream::new();
     if !conv2d_fields.is_empty() {
         quote_into::quote_into!(conv2d_stream_assign += [#{
-            for (name, n) in conv2d_fields {
+            for (name, n) in conv2d_fields.iter() {
                 conv2d_stream_assign.extend(quote::quote!((self.#name = ::std::boxed::Box::new(new_layers.conv2d.get(#n).unwrap().clone())),))
+            }
+        }];);
+    }
+
+    let mut conv2d_merge_stream_assign = TokenStream::new();
+    if !conv2d_fields.is_empty() {
+        quote_into::quote_into!(conv2d_merge_stream_assign += [#{
+            for (name, n) in conv2d_fields.iter() {
+                conv2d_merge_stream_assign.extend(quote::quote!(({
+                    (new_layers.conv2d.get_mut(#n).unwrap().clone()).merge_weights().expect("Merge failed for conv2d.");
+                    self.#name = ::std::boxed::Box::new(new_layers.conv2d.get(#n).unwrap().clone())
+                }),))
             }
         }];);
     }
@@ -365,8 +401,20 @@ pub fn auto_lora_convert(tokens: TokenStream1) -> TokenStream1 {
     let mut embed_stream_assign = TokenStream::new();
     if !embed_fields.is_empty() {
         quote_into::quote_into!(embed_stream_assign += [#{
-            for (name, n) in embed_fields {
+            for (name, n) in embed_fields.iter() {
                 embed_stream_assign.extend(quote::quote!((self.#name = ::std::boxed::Box::new(new_layers.embed.get(#n).unwrap().clone())),))
+            }
+        }];);
+    }
+
+    let mut embed_merge_stream_assign = TokenStream::new();
+    if !embed_fields.is_empty() {
+        quote_into::quote_into!(embed_merge_stream_assign += [#{
+            for (name, n) in embed_fields.iter() {
+                embed_merge_stream_assign.extend(quote::quote!(({
+                    (new_layers.embed.get_mut(#n).unwrap().clone()).merge_weights().expect("Merge failed for embed.");
+                    self.#name = ::std::boxed::Box::new(new_layers.embed.get(#n).unwrap().clone())
+                }),))
             }
         }];);
     }
@@ -410,8 +458,20 @@ pub fn auto_lora_convert(tokens: TokenStream1) -> TokenStream1 {
     let mut linear_option1_stream_assign = TokenStream::new();
     if !linear_option1_fields.is_empty() {
         quote_into::quote_into!(linear_option1_stream_assign += [#{
-            for (name, n) in linear_option1_fields {
+            for (name, n) in linear_option1_fields.iter() {
                 linear_option1_stream_assign.extend(quote::quote!((self.#name = ::std::option::Option::Some(::std::boxed::Box::new(new_layers.linear.get(#n).unwrap().clone()))),))
+            }
+        }];);
+    }
+
+    let mut linear_merge_option1_stream_assign = TokenStream::new();
+    if !linear_option1_fields.is_empty() {
+        quote_into::quote_into!(linear_merge_option1_stream_assign += [#{
+            for (name, n) in linear_option1_fields.iter() {
+                linear_merge_option1_stream_assign.extend(quote::quote!(({
+                    (new_layers.linear.get_mut(#n).unwrap().clone()).merge_weights().expect("Merge failed for option linear.");
+                    self.#name = ::std::option::Option::Some(::std::boxed::Box::new(new_layers.linear.get(#n).unwrap().clone()))
+                }),))
             }
         }];);
     }
@@ -419,8 +479,20 @@ pub fn auto_lora_convert(tokens: TokenStream1) -> TokenStream1 {
     let mut conv1d_option1_stream_assign = TokenStream::new();
     if !conv1d_option1_fields.is_empty() {
         quote_into::quote_into!(conv1d_option1_stream_assign += [#{
-            for (name, n) in conv1d_option1_fields {
+            for (name, n) in conv1d_option1_fields.iter() {
                 conv1d_option1_stream_assign.extend(quote::quote!((self.#name = ::std::option::Option::Some(::std::boxed::Box::new(new_layers.conv1d.get(#n).unwrap().clone()))),))
+            }
+        }];);
+    }
+
+    let mut conv1d_merge_option1_stream_assign = TokenStream::new();
+    if !conv1d_option1_fields.is_empty() {
+        quote_into::quote_into!(conv1d_merge_option1_stream_assign += [#{
+            for (name, n) in conv1d_option1_fields.iter() {
+                conv1d_merge_option1_stream_assign.extend(quote::quote!(({
+                    (new_layers.conv1d.get_mut(#n).unwrap().clone()).merge_weights().expect("Merge failed for option conv1d.");
+                    self.#name = ::std::option::Option::Some(::std::boxed::Box::new(new_layers.conv1d.get(#n).unwrap().clone()))
+                }),))
             }
         }];);
     }
@@ -428,8 +500,20 @@ pub fn auto_lora_convert(tokens: TokenStream1) -> TokenStream1 {
     let mut conv2d_option1_stream_assign = TokenStream::new();
     if !conv2d_option1_fields.is_empty() {
         quote_into::quote_into!(conv2d_option1_stream_assign += [#{
-            for (name, n) in conv2d_option1_fields {
+            for (name, n) in conv2d_option1_fields.iter() {
                 conv2d_option1_stream_assign.extend(quote::quote!((self.#name = ::std::option::Option::Some(::std::boxed::Box::new(new_layers.conv2d.get(#n).unwrap().clone()))),))
+            }
+        }];);
+    }
+
+    let mut conv2d_merge_option1_stream_assign = TokenStream::new();
+    if !conv2d_option1_fields.is_empty() {
+        quote_into::quote_into!(conv2d_merge_option1_stream_assign += [#{
+            for (name, n) in conv2d_option1_fields.iter() {
+                conv2d_merge_option1_stream_assign.extend(quote::quote!(({
+                    (new_layers.conv2d.get_mut(#n).unwrap().clone()).merge_weights().expect("Merge failed for option conv2d.");
+                    self.#name = ::std::option::Option::Some(::std::boxed::Box::new(new_layers.conv2d.get(#n).unwrap().clone()))
+                }),))
             }
         }];);
     }
@@ -437,8 +521,20 @@ pub fn auto_lora_convert(tokens: TokenStream1) -> TokenStream1 {
     let mut embed_option1_stream_assign = TokenStream::new();
     if !embed_option1_fields.is_empty() {
         quote_into::quote_into!(embed_option1_stream_assign += [#{
-            for (name, n) in embed_option1_fields {
+            for (name, n) in embed_option1_fields.iter() {
                 embed_option1_stream_assign.extend(quote::quote!((self.#name = ::std::option::Option::Some(::std::boxed::Box::new(new_layers.embed.get(#n).unwrap().clone()))),))
+            }
+        }];);
+    }
+
+    let mut embed_merge_option1_stream_assign = TokenStream::new();
+    if !embed_option1_fields.is_empty() {
+        quote_into::quote_into!(embed_merge_option1_stream_assign += [#{
+            for (name, n) in embed_option1_fields.iter() {
+                embed_merge_option1_stream_assign.extend(quote::quote!(({
+                    (new_layers.embed.get_mut(#n).unwrap().clone()).merge_weights().expect("Merge failed for option embed.");
+                    self.#name = ::std::option::Option::Some(:std::boxed::Box::new(new_layers.embed.get(#n).unwrap().clone()))
+                }),))
             }
         }];);
     }
@@ -502,6 +598,65 @@ pub fn auto_lora_convert(tokens: TokenStream1) -> TokenStream1 {
                 #conv1d_option1_stream_assign
                 #conv2d_option1_stream_assign
                 #embed_option1_stream_assign
+            }
+
+            /// Be sure to provide a configuration for each type!
+            fn get_merged_lora_model<'a>(&'a mut self, lora_config: candle_lora::LoraConfig, linear_config: Option<candle_lora::LoraLinearConfig>, conv1d_config: Option<candle_lora::LoraConv1dConfig>, conv2d_config: Option<candle_lora::LoraConv2dConfig>, embed_config: Option<candle_lora::LoraEmbeddingConfig>) {
+                use candle_lora::Merge;
+                let mut linear: ::std::collections::HashMap<String, &dyn candle_lora::LinearLayerLike> = ::std::collections::HashMap::new();
+                let mut conv1d: ::std::collections::HashMap<String, &dyn candle_lora::Conv1dLayerLike> = ::std::collections::HashMap::new();
+                let mut conv2d: ::std::collections::HashMap<String, &dyn candle_lora::Conv2dLayerLike> = ::std::collections::HashMap::new();
+                let mut embed: ::std::collections::HashMap<String, &dyn candle_lora::EmbeddingLayerLike> = ::std::collections::HashMap::new();
+
+                #linear_stream
+                #conv1d_stream
+                #conv2d_stream
+                #embed_stream
+
+                #linear_option1_stream
+                #conv1d_option1_stream
+                #conv2d_option1_stream
+                #embed_option1_stream
+
+                if !linear.is_empty() && linear_config.is_none() {
+                    panic!("Config not speified for linear layers.");
+                }
+                if !conv1d.is_empty() && conv1d_config.is_none() {
+                    panic!("Config not speified for conv1d layers.");
+                }
+                if !conv2d.is_empty() && conv2d_config.is_none() {
+                    panic!("Config not speified for conv2d layers.");
+                }
+                if !embed.is_empty() && embed_config.is_none() {
+                    panic!("Config not speified for embedding layers.");
+                }
+
+                let mut builder = candle_lora::SelectedLayersBuilder::new();
+                if linear_config.is_some() {
+                    builder = builder.add_linear_layers(linear, linear_config.unwrap());
+                }
+                if conv1d_config.is_some() {
+                    builder = builder.add_conv1d_layers(conv1d, conv1d_config.unwrap());
+                }
+                if conv2d_config.is_some() {
+                    builder = builder.add_conv2d_layers(conv2d, conv2d_config.unwrap());
+                }
+                if embed_config.is_some() {
+                    builder = builder.add_embed_layers(embed, embed_config.unwrap());
+                }
+                let selection = builder.build();
+
+                let mut new_layers = candle_lora::Lora::convert_model(selection, lora_config);
+
+                #linear_merge_stream_assign
+                #conv1d_merge_stream_assign
+                #conv2d_merge_stream_assign
+                #embed_merge_stream_assign
+
+                #linear_merge_option1_stream_assign
+                #conv1d_merge_option1_stream_assign
+                #conv2d_merge_option1_stream_assign
+                #embed_merge_option1_stream_assign
             }
         }
     }

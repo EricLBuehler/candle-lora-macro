@@ -1,7 +1,9 @@
 use candle_core::{DType, Device, Module, Result, Tensor};
-use candle_lora::{EmbeddingLayerLike, LinearLayerLike, LoraConfig, LoraEmbeddingConfig, LoraLinearConfig};
+use candle_lora::{
+    EmbeddingLayerLike, LinearLayerLike, LoraConfig, LoraEmbeddingConfig, LoraLinearConfig,
+};
 use candle_lora_macro::{replace_layer_fields, AutoLoraConvert};
-use candle_nn::{init, Embedding, VarMap, Linear};
+use candle_nn::{init, Embedding, Linear, VarMap};
 
 #[replace_layer_fields]
 #[derive(AutoLoraConvert)]
@@ -37,7 +39,7 @@ fn main() {
     };
 
     let loraconfig = LoraConfig::new(1, 1., None, &device, dtype);
-    model.get_lora_model(
+    model.get_merged_lora_model(
         loraconfig,
         Some(LoraLinearConfig::new(10, 10)),
         None,

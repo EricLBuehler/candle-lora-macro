@@ -21,3 +21,5 @@ To further automate the process of using `candle-lora`, `candle-lora-macro` also
 - `Option<Conv1d>` to `Option<Box<dyn Conv1dLayerLike>>`
 - `Option<Conv2d>` to `Option<Box<dyn Conv2dLayerLike>>`
 - `Option<Embedding>` to `Option<Box<dyn EmbeddigLayerLike>>`
+
+In addition, `candle-lora-macro` also defines a method `get_merged_lora_model` which does everything `get_lora_model` does, but also merges the weights of the LoRA layers to improve inference performance.

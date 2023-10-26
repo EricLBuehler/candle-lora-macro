@@ -118,8 +118,6 @@ pub fn replace_layer_fields(_args: TokenStream1, input: TokenStream1) -> TokenSt
                                     }
                                     _ => {}
                                 }
-                            } else {
-                                panic!("Expected single type")
                             }
                         }
                         _ => {

@@ -6,7 +6,7 @@ use candle_nn::{init, Linear, VarBuilder, VarMap};
 #[replace_layer_fields]
 #[derive(AutoLoraConvert, Debug)]
 struct Model {
-    a: Linear,
+    a: Box<dyn LinearLayerLike>,
     b: i32,
 }
 

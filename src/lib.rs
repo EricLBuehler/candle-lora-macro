@@ -531,7 +531,7 @@ pub fn auto_lora_convert(tokens: TokenStream1) -> TokenStream1 {
             for (name, n) in embed_option1_fields.iter() {
                 embed_merge_option1_stream_assign.extend(quote::quote!(({
                     (new_layers.embed.get_mut(#n).unwrap().clone()).merge_weights().expect("Merge failed for option embed.");
-                    self.#name = ::std::option::Option::Some(:std::boxed::Box::new(new_layers.embed.get(#n).unwrap().clone()))
+                    self.#name = ::std::option::Option::Some(::std::boxed::Box::new(new_layers.embed.get(#n).unwrap().clone()))
                 }),))
             }
         }];);

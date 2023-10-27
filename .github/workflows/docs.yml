@@ -1,4 +1,4 @@
-name: Continuous deployment
+name: docs
 #https://dev.to/deciduously/prepare-your-rust-api-docs-for-github-pages-2n5i
 on:
   push:
@@ -29,10 +29,6 @@ jobs:
           rm -rf ./docs
           echo "<meta http-equiv=\"refresh\" content=\"0; url=candle_lora_macro\">" > target/doc/index.html
           cp -r target/doc ./docs
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
-        with:
-          path: './docs'
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:

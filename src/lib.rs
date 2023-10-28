@@ -120,9 +120,7 @@ pub fn replace_layer_fields(_args: TokenStream1, input: TokenStream1) -> TokenSt
                                 }
                             }
                         }
-                        _ => {
-                            panic!("Expected syn::Type::Path");
-                        }
+                        _ => {}
                     }
                     if let Some(f) = f {
                         *field = f;

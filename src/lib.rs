@@ -9,14 +9,14 @@ use syn::{
 pub fn replace_layer_fields(_args: TokenStream1, input: TokenStream1) -> TokenStream1 {
     let mut ast = parse_macro_input!(input as DeriveInput);
     match &mut ast.data {
-        Data::Struct(ref mut struct_data) => match &mut struct_data.fields {
-            Fields::Named(fields) => {
-                for field in fields.named.iter_mut() {
-                    let mut f = None;
-                    let ident = field.ident.clone().unwrap();
-                    let ty = field.ty.clone();
-                    match ty {
-                        Type::Path(path) => {
+        Data::Struct(ref mut struct_data) => {
+            match &mut struct_data.fields {
+                Fields::Named(fields) => {
+                    for field in fields.named.iter_mut() {
+                        let mut f = None;
+                        let ident = field.ident.clone().unwrap();
+                        let ty = field.ty.clone();
+                        if let Type::Path(path) = ty {
                             if path.path.segments.len() == 1 {
                                 match path
                                     .path
@@ -120,17 +120,16 @@ pub fn replace_layer_fields(_args: TokenStream1, input: TokenStream1) -> TokenSt
                                 }
                             }
                         }
-                        _ => {}
-                    }
-                    if let Some(f) = f {
-                        *field = f;
+                        if let Some(f) = f {
+                            *field = f;
+                        }
                     }
                 }
+                _ => {
+                    panic!("Named fields are required.")
+                }
             }
-            _ => {
-                panic!("Named fields are required.")
-            }
-        },
+        }
         _ => {
             panic!("Cannot swap fields of non struct!");
         }

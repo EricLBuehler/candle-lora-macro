@@ -3,6 +3,8 @@
 [![Continuous integration](https://github.com/EricLBuehler/candle-lora-macro/actions/workflows/ci.yml/badge.svg)](https://github.com/EricLBuehler/candle-lora-macro/actions/workflows/ci.yml)
 [![Documentation](https://github.com/EricLBuehler/candle-lora-macro/actions/workflows/docs.yml/badge.svg)](https://ericlbuehler.github.io/candle-lora-macro/candle_lora_macro/)
 
+## ⚠️ **This crate is deprecated and has been merged with `candle-lora` itself**.
+
 This library makes using [`candle-lora`](https://github.com/EricLBuehler/candle-lora) as simple as adding 2 macros to your model structs and calling a method! It is inspired by the simplicity of the Python `peft` library's `get_peft_model` method. Like `candle-lora`, the supported concrete layer types are `Linear`, `Conv1d`, `Conv2d`, and `Embedding`.
 
 `candle-lora-macro` exports 2 macros: `AutoLoraConvert` and `replace_layer_fields`.
